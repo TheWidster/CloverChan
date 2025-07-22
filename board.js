@@ -4,14 +4,12 @@ const postsDiv = document.getElementById("posts");
 let posts = JSON.parse(localStorage.getItem("cloverchan_posts")) || [];
 renderPosts();
 
-// Form submission handler
-form.addEventListener("submit", async function (e) {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const name = document.getElementById("name").value.trim() || "Anon";
   const message = document.getElementById("message").value.trim();
-  const imageInput = document.getElementById("image");
-  const imageFile = imageInput.files[0];
+  const imageFile = document.getElementById("image").files[0];
 
   if (!message && !imageFile) {
     alert("Say something or post a pic, coward.");
@@ -22,7 +20,7 @@ form.addEventListener("submit", async function (e) {
   if (imageFile) {
     imageUrl = await uploadToCatbox(imageFile);
     if (!imageUrl) {
-      alert("Image upload failed.");
+      alert("Image upload failed. Check console.");
       return;
     }
   }
@@ -34,7 +32,6 @@ form.addEventListener("submit", async function (e) {
   form.reset();
 });
 
-// Upload to Catbox
 async function uploadToCatbox(file) {
   const formData = new FormData();
   formData.append("reqtype", "fileupload");
@@ -47,31 +44,30 @@ async function uploadToCatbox(file) {
     });
 
     if (!response.ok) {
-      console.error("Failed to upload image:", response.statusText);
+      console.error("Upload failed with status:", response.status);
       return "";
     }
 
     const url = await response.text();
+    console.log("Catbox upload URL:", url);
+
     if (!url.startsWith("https://")) {
-      console.error("Catbox gave a weird response:", url);
+      console.error("Invalid upload URL:", url);
       return "";
     }
 
-    console.log("Uploaded image to:", url);
     return url;
-  } catch (err) {
-    console.error("Upload error:", err);
+  } catch (error) {
+    console.error("Upload error:", error);
     return "";
   }
 }
 
-// Render all saved posts
 function renderPosts() {
   postsDiv.innerHTML = "";
   posts.forEach(renderPost);
 }
 
-// Render a single post
 function renderPost(post) {
   const div = document.createElement("div");
   div.innerHTML = `
