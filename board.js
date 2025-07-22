@@ -47,15 +47,15 @@ async function uploadTo0x0st(file) {
       return "";
     }
 
-    const url = await response.text();
-    console.log("0x0.st upload URL:", url.trim());
+    const url = (await response.text()).trim();
+    console.log("0x0.st upload URL:", url);
 
     if (!url.startsWith("https://")) {
       console.error("Invalid upload URL:", url);
       return "";
     }
 
-    return url.trim();
+    return url;
   } catch (error) {
     console.error("Upload error:", error);
     return "";
