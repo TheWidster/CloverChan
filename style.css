@@ -1,0 +1,32 @@
+body {
+  background: #0a0a0a;
+  color: #cfcfcf;
+  font-family: monospace;
+  padding: 20px;
+}
+
+h1 {
+  color: #00ff00;
+}
+
+form {
+  background: #1a1a1a;
+  padding: 10px;
+  border: 1px solid #333;
+  margin-bottom: 20px;
+}
+
+textarea, input {
+  width: 100%;
+  margin: 5px 0;
+  background: #222;
+  color: #eee;
+  border: 1px solid #444;
+}
+
+img {
+  max-width: 300px;
+  display: block;
+  margin-top: 5px;
+  border: 1px solid #555;
+}
