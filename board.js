@@ -4,19 +4,27 @@ const postsDiv = document.getElementById("posts");
 let posts = JSON.parse(localStorage.getItem("cloverchan_posts")) || [];
 renderPosts();
 
-// Handle submission
+// Form submission handler
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  const name = document.getElementById("name").value || "Anon";
+  const name = document.getElementById("name").value.trim() || "Anon";
   const message = document.getElementById("message").value.trim();
-  const imageFile = document.getElementById("image").files[0];
+  const imageInput = document.getElementById("image");
+  const imageFile = imageInput.files[0];
 
-  if (!message && !imageFile) return alert("Post something, you creep.");
+  if (!message && !imageFile) {
+    alert("Say something or post a pic, coward.");
+    return;
+  }
 
   let imageUrl = "";
   if (imageFile) {
     imageUrl = await uploadToCatbox(imageFile);
+    if (!imageUrl) {
+      alert("Image upload failed.");
+      return;
+    }
   }
 
   const post = { name, message, image: imageUrl };
@@ -26,35 +34,51 @@ form.addEventListener("submit", async function (e) {
   form.reset();
 });
 
+// Upload to Catbox
 async function uploadToCatbox(file) {
   const formData = new FormData();
   formData.append("reqtype", "fileupload");
   formData.append("fileToUpload", file);
 
-  const response = await fetch("https://catbox.moe/user/api.php", {
-    method: "POST",
-    body: formData,
-  });
+  try {
+    const response = await fetch("https://catbox.moe/user/api.php", {
+      method: "POST",
+      body: formData,
+    });
 
-  return await response.text();
+    if (!response.ok) {
+      console.error("Failed to upload image:", response.statusText);
+      return "";
+    }
+
+    const url = await response.text();
+    if (!url.startsWith("https://")) {
+      console.error("Catbox gave a weird response:", url);
+      return "";
+    }
+
+    console.log("Uploaded image to:", url);
+    return url;
+  } catch (err) {
+    console.error("Upload error:", err);
+    return "";
+  }
 }
 
+// Render all saved posts
 function renderPosts() {
   postsDiv.innerHTML = "";
   posts.forEach(renderPost);
 }
 
+// Render a single post
 function renderPost(post) {
   const div = document.createElement("div");
   div.innerHTML = `
     <p><strong>${post.name}</strong></p>
-    ${post.image ? `<img src="${post.image}">` : ""}
+    ${post.image ? `<img src="${post.image}" alt="image">` : ""}
     <p>${post.message}</p>
     <hr>
   `;
   postsDiv.appendChild(div);
-}
-
-console.log("Catbox returned URL:", url);
-
 }
