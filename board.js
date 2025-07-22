@@ -18,7 +18,7 @@ form.addEventListener("submit", async (e) => {
 
   let imageUrl = "";
   if (imageFile) {
-    imageUrl = await uploadToCatbox(imageFile);
+    imageUrl = await uploadTo0x0st(imageFile);
     if (!imageUrl) {
       alert("Image upload failed. Check console.");
       return;
@@ -32,13 +32,12 @@ form.addEventListener("submit", async (e) => {
   form.reset();
 });
 
-async function uploadToCatbox(file) {
+async function uploadTo0x0st(file) {
   const formData = new FormData();
-  formData.append("reqtype", "fileupload");
-  formData.append("fileToUpload", file);
+  formData.append("file", file);
 
   try {
-    const response = await fetch("https://catbox.moe/user/api.php", {
+    const response = await fetch("https://0x0.st", {
       method: "POST",
       body: formData,
     });
@@ -49,14 +48,14 @@ async function uploadToCatbox(file) {
     }
 
     const url = await response.text();
-    console.log("Catbox upload URL:", url);
+    console.log("0x0.st upload URL:", url.trim());
 
     if (!url.startsWith("https://")) {
       console.error("Invalid upload URL:", url);
       return "";
     }
 
-    return url;
+    return url.trim();
   } catch (error) {
     console.error("Upload error:", error);
     return "";
