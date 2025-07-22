@@ -54,3 +54,7 @@ function renderPost(post) {
   `;
   postsDiv.appendChild(div);
 }
+
+console.log("Catbox returned URL:", url);
+
+}
